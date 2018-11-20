@@ -64,5 +64,4 @@ processing_per_hh <- sec8g %>% mutate(ID = paste(clust,nh,sep="_"),
 summary(processing_per_hh)
 
 
-inc1 <- read_dta(here("raw_data/glss4/aggregates","inc1.dta"))
-
+inc1 <- read_dta(here("raw_data/glss4/aggregates","inc1.dta")) #value of scholarship
