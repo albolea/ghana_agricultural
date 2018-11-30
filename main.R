@@ -155,3 +155,35 @@ base <- base %>% left_join(educ_info_2)
 mod_4 <- lm(profit_per_acre~farm_size+spouse_live_hh+sex_male+fishing+
               educ_none+do_math,data=base)
 summary(mod_4)
+
+####### HOUSING INFO
+
+housing_info <- read_dta(here("raw_data/glss4","sec7.dta")) 
+housing_info <- housing_info %>% 
+  mutate(ID = paste(clust,nh,sep="_"),
+         light_eletricity = s7dq8 == 1,
+         light_generator = s7dq8 == 2,
+         light_others = s7dq8>2,
+         cooking_full_gas = s7dq10 ==3,
+         cooking_full_eletricity = s7dq10 ==4,
+         cooking_other = (s7dq10<3|s7dq10>4),
+         toilet_flush = s7dq13==1,
+         toilet_latrine = s7dq13==2,
+         toilet_others = s7dq13>2,
+         wall_mud = s7eq1==1,
+         wall_wood = s7eq1==2,
+         wall_iron = s7eq3==3,
+         wall_stone = s7eq3==4,
+         wall_cement = s7eq3==5,
+         wall_other = s7eq3==6
+  ) %>% 
+  select(-clust,-nh,-starts_with("s7"))
+base <- base %>% left_join(housing_info)
+mod_5 <- lm(profit_per_acre~light_eletricity+light_generator+cooking_full_gas+cooking_full_eletricity+
+              toilet_flush+toilet_latrine+wall_mud+wall_wood+wall_iron+
+              wall_stone+wall_cement,data=base)
+summary(mod_5)
+
+mod_6 <- lm(profit_per_acre~light_eletricity+cooking_full_gas+
+              toilet_flush+toilet_latrine+wall_mud+wall_wood+wall_iron,data=base)
+summary(mod_6)
