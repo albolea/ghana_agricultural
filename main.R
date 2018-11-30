@@ -104,7 +104,8 @@ family_info <- family_info %>% rename(spouse_live_hh = s1q7) %>%
   mutate(ID = paste(clust,nh,sep="_"),
          spouse_live_hh = spouse_live_hh==1,
          sex_male = sex==1) %>% 
-  select(ID,spouse_live_hh,sex_male,agey)
+  filter(rel==1) %>% 
+  select(ID,pid,spouse_live_hh,sex_male,agey)
 
 base <- base %>% left_join(family_info)
 
