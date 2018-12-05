@@ -59,7 +59,8 @@ land_size <- land_size %>%
   group_by(ID) %>% 
   summarise(farm_size = sum(farm_size))
 
-
+#excluding farm that is too big / to small compared with others
+land_size <- land_size %>% filter(farm_size>0.5 & farm_size <100)
 
 inf_farmers <- read_dta(here("raw_data/glss4","sec6.dta")) #Identification of farm and No-n farm Enterprises
 
@@ -85,17 +86,19 @@ base <- base %>% mutate(profit_per_acre = profit/farm_size,
                         profit_usd = profit/3550,
                         profit_per_acre_usd = profit_usd/farm_size)
 
+
+
+#exclude outliers 99% confidence
+se = sd(base$profit_per_acre)
+avg = mean(base$profit_per_acre)
+base <- base %>% filter(profit_per_acre>(avg-1.96*se)&profit_per_acre<(avg+1.96*se))
+
 #scale profit to use log
 base <- base %>%
   mutate(
     profit_log = log(profit-(min(profit)-10000)),
     profit_per_acre_log = log((profit-(min(profit)-10000))/farm_size)
   )
-
-#exclude outliers 99% confidence
-se = sd(base$profit_per_acre)
-avg = mean(base$profit_per_acre)
-base <- base %>% filter(profit_per_acre>(avg-2.326*se)&profit_per_acre<(avg+2.326*se))
 
 # #scale profit to use log
 # base <- base %>%
@@ -372,3 +375,89 @@ mod_8_log <- lm(profit_per_acre_log~most_impor_farming + most_impor_fishing +  m
                 any_farm_use_inset_herb + any_farm_use_irrigate + mutual_aid_farm,data=base)
 summary(mod_8_log)
 
+
+mod_9_log <- lm(profit_per_acre_log~most_impor_farming + most_impor_fishing +  moto_road +
+                  moto_road_impassable +  have_bar + have_post_of_pub_telephone + have_bank +
+                  have_daily_mkt + have_week_mkt + public_transp + people_come_for_job_farming +
+                  have_hospital + have_agric_ext_center + have_cooperative + any_farm_use_fert +
+                  any_farm_use_inset_herb + any_farm_use_irrigate + mutual_aid_farm +
+                  farm_size+agey+spouse_live_hh+sex_male+fishing+own_business+
+                  educ_bece+educ_advanced+
+                  region_Western+region_Central+region_Greater_Accra+
+                  region_Eastern+region_Volta+region_Ashanti+region_Brong_Ahafo+
+                  region_Northern+region_Upper_East+light_eletricity+light_generator+
+                  cooking_full_gas+
+                  toilet_flush+toilet_latrine+wall_mud+wall_wood+wall_iron+
+                  wall_stone+wall_cement+harvest_sold_gate+harvest_sold_market+
+                  harvest_sold_consumer+harvest_sold_state_org+harvest_sold_coop+
+                  paid_at_sale+paid_at_week+paid_at_month+males_on_farme+
+                  females_on_farme, data=base)
+summary(mod_9_log)
+
+mod_10_log <- lm(profit_per_acre_log~have_bar + have_post_of_pub_telephone + 
+                  any_farm_use_fert +
+                  farm_size+agey+spouse_live_hh+sex_male+educ_bece+educ_advanced+
+                  region_Western+region_Central+region_Greater_Accra+
+                  region_Eastern+region_Volta+region_Ashanti+region_Brong_Ahafo+
+                  region_Northern+region_Upper_East+light_eletricity+
+                  cooking_full_gas+harvest_sold_gate+harvest_sold_market+
+                  harvest_sold_state_org+harvest_sold_coop, data=base)
+summary(mod_10_log)
+
+#Excluding education
+mod_11_log <- lm(profit_per_acre_log~have_bar + have_post_of_pub_telephone + 
+                   any_farm_use_fert +
+                   farm_size+agey+spouse_live_hh+sex_male+
+                   region_Western+region_Central+region_Greater_Accra+
+                   region_Eastern+region_Volta+region_Ashanti+region_Brong_Ahafo+
+                   region_Northern+region_Upper_East+light_eletricity+
+                   cooking_full_gas+harvest_sold_gate+harvest_sold_market+
+                   harvest_sold_state_org+harvest_sold_coop, data=base)
+summary(mod_11_log)
+
+#Eco Zone instead of region
+mod_12_log <- lm(profit_per_acre_log~have_bar + have_post_of_pub_telephone + 
+                   any_farm_use_fert +
+                   farm_size+agey+spouse_live_hh+sex_male+
+                   region_Western+region_Central+region_Greater_Accra+
+                   region_Eastern+region_Volta+region_Ashanti+region_Brong_Ahafo+
+                   region_Northern+region_Upper_East+light_eletricity+
+                   cooking_full_gas+harvest_sold_gate+harvest_sold_market+
+                   harvest_sold_state_org+harvest_sold_coop+ez_Costal+ez_Forest, data=base)
+summary(mod_12_log)
+
+#excluding NAs
+base <- base %>% filter(!is.na(have_bar) & !is.na(harvest_sold_coop))
+
+#droping region_Western,region_Central,region_Ashanti,region_Northern
+
+# mod_13_log <- lm(profit_per_acre_log~ any_farm_use_fert + farm_size + agey + spouse_live_hh + sex_male +
+#                    region_Greater_Accra + region_Eastern+region_Volta + 
+#                    region_Upper_East + light_eletricity+ cooking_full_gas + harvest_sold_market + 
+#                    harvest_sold_state_org  , data=base)
+
+mod_13_log <- lm(profit_per_acre_log~ any_farm_use_fert + farm_size + agey + spouse_live_hh + sex_male +
+                   region_Western+region_Central+region_Greater_Accra+
+                   region_Eastern+region_Volta+region_Ashanti+region_Brong_Ahafo+
+                   region_Northern+region_Upper_East + light_eletricity+ cooking_full_gas + 
+                   harvest_sold_market + harvest_sold_state_org + ez_Costal+ ez_Forest  , data=base)
+summary(mod_13_log)
+
+
+#Standardised residuals plot
+base <- base %>% 
+  mutate(
+    stand_res = rstandard(mod_13_log)
+  )
+base %>% ggplot(aes(x = stand_res)) +
+  geom_histogram(binwidth = 0.25) + xlab("Standardized residuals")
+# standardized residual more normal
+ggsave(here("figures", "model_stand_res.png"))
+
+# residual versus the fitted value
+base$fitted <- mod_13_log$fitted.values
+base$residuals <- mod_13_log$residuals
+base %>% ggplot(aes(x = fitted, y = residuals)) +
+  geom_point()
+#homoskedasticity 
+ggsave(here("figures", "model_res_vs_fitted.png"))
