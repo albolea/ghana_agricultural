@@ -12,10 +12,10 @@ shhh(library(fastDummies))
 profit_hh <- read_dta(here("raw_data/glss4/aggregates","agg2.dta"))
 #exclude depreciation from profit and exclude profit = 0
 profit_hh <- profit_hh %>% mutate(profit= agri1c) %>% #-hhagdepn
-    filter(profit > 0 | profit < 0 ) %>% 
-    mutate(ID = paste(clust,nh,sep="_")) %>% 
-    select(ID,profit)
-  
+  filter(profit > 0 | profit < 0 ) %>% 
+  mutate(ID = paste(clust,nh,sep="_")) %>% 
+  select(ID,profit)
+
 #descriptive analize of profit
 summary(profit_hh)
 
@@ -180,16 +180,16 @@ mod_1 <- lm(profit_per_acre~farm_size+agey+spouse_live_hh+sex_male+fishing+own_b
               region_Northern+region_Upper_East,data=base)
 summary(mod_1)
 mod_1_log <- lm(profit_per_acre_log~farm_size+agey+spouse_live_hh+sex_male+fishing+own_business+
-              educ_bece+educ_advanced+
-              region_Western+region_Central+region_Greater_Accra+
-              region_Eastern+region_Volta+region_Ashanti+region_Brong_Ahafo+
-              region_Northern+region_Upper_East,data=base)
+                  educ_bece+educ_advanced+
+                  region_Western+region_Central+region_Greater_Accra+
+                  region_Eastern+region_Volta+region_Ashanti+region_Brong_Ahafo+
+                  region_Northern+region_Upper_East,data=base)
 summary(mod_1_log)
 
 mod_1b <- lm(profit_per_acre~farm_size+spouse_live_hh+fishing+ez_Costal+ez_Forest,data=base)
 summary(mod_1b)
 
-    
+
 
 mod_2 <- lm(profit_per_acre~farm_size+agey+spouse_live_hh+sex_male+fishing+own_business+
               educ_bece+educ_voc +educ_O_level +educ_sss +educ_a_level +educ_t_cert +
@@ -197,17 +197,17 @@ mod_2 <- lm(profit_per_acre~farm_size+agey+spouse_live_hh+sex_male+fishing+own_b
 summary(mod_2)
 
 mod_2_log <- lm(profit_per_acre_log~farm_size+agey+spouse_live_hh+sex_male+fishing+own_business+
-              educ_bece+educ_voc +educ_O_level +educ_sss +educ_a_level +educ_t_cert +
-              educ_nurse +educ_tech +educ_bach +educ_master +educ_phd +educ_other,data=base)
+                  educ_bece+educ_voc +educ_O_level +educ_sss +educ_a_level +educ_t_cert +
+                  educ_nurse +educ_tech +educ_bach +educ_master +educ_phd +educ_other,data=base)
 summary(mod_2_log)
 
 mod_2b <- lm(profit_per_acre~farm_size+agey+spouse_live_hh+sex_male+fishing+own_business+
-              educ_bece+educ_voc +educ_O_level +educ_sss +educ_a_level +educ_t_cert +
-              educ_nurse +educ_tech +educ_bach +educ_master +educ_phd +educ_other,data=base)
+               educ_bece+educ_voc +educ_O_level +educ_sss +educ_a_level +educ_t_cert +
+               educ_nurse +educ_tech +educ_bach +educ_master +educ_phd +educ_other,data=base)
 summary(mod_2b)
 
 mod_2b_log <- lm(profit_per_acre_log~farm_size+agey+spouse_live_hh+sex_male+fishing+own_business+
-                  educ_advanced,data=base)
+                   educ_advanced,data=base)
 summary(mod_2b_log)
 
 mod_3 <- lm(profit_per_acre~farm_size+spouse_live_hh+sex_male+fishing+
@@ -230,7 +230,7 @@ mod_4 <- lm(profit_per_acre~farm_size+spouse_live_hh+sex_male+fishing+
 summary(mod_4)
 
 mod_4_log <- lm(profit_per_acre_log~farm_size+spouse_live_hh+sex_male+fishing+
-              educ_advanced+do_math,data=base)
+                  educ_advanced+do_math,data=base)
 summary(mod_4_log)
 
 ####### HOUSING INFO
@@ -264,8 +264,8 @@ mod_5 <- lm(profit_per_acre~light_eletricity+light_generator+cooking_full_gas+co
 summary(mod_5)
 
 mod_5_log <- lm(profit_per_acre_log~light_eletricity+light_generator+cooking_full_gas+cooking_full_eletricity+
-              toilet_flush+toilet_latrine+wall_mud+wall_wood+wall_iron+
-              wall_stone+wall_cement,data=base)
+                  toilet_flush+toilet_latrine+wall_mud+wall_wood+wall_iron+
+                  wall_stone+wall_cement,data=base)
 summary(mod_5_log)
 
 mod_6 <- lm(profit_per_acre~light_eletricity+cooking_full_gas+
@@ -273,27 +273,27 @@ mod_6 <- lm(profit_per_acre~light_eletricity+cooking_full_gas+
 summary(mod_6)
 
 mod_6_log <- lm(profit_per_acre_log~light_eletricity+cooking_full_gas+
-              toilet_flush+toilet_latrine+wall_mud+wall_wood+wall_iron,data=base)
+                  toilet_flush+toilet_latrine+wall_mud+wall_wood+wall_iron,data=base)
 summary(mod_6_log)
 
 work_force <- read_dta(here("raw_data/glss4","sec8c1.dta")) 
 
 work_force <- work_force %>% 
-    mutate(ID = paste(clust,nh,sep="_"),
-           harvest_sold_pre = s8cq6 == 1,
-           harvest_sold_gate = s8cq6 == 2,
-           harvest_sold_market = s8cq6 == 3,
-           harvest_sold_consumer = s8cq6 == 4,
-           harvest_sold_state_org = s8cq6 == 5,
-           harvest_sold_coop = s8cq6 == 6,
-           paid_at_sale = s8cq10a == 1,
-           paid_at_week = s8cq10a == 2,
-           paid_at_month = s8cq10a == 3,
-           paid_at_over_m = s8cq10a == 4,
-           males_on_farme = ifelse(s8cq17a>1e+100,0,s8cq17a),
-           females_on_farme = ifelse(s8cq17b>1e+100,0,s8cq17b),
-           workers_on_farm = males_on_farme + females_on_farme
-    ) %>% 
+  mutate(ID = paste(clust,nh,sep="_"),
+         harvest_sold_pre = s8cq6 == 1,
+         harvest_sold_gate = s8cq6 == 2,
+         harvest_sold_market = s8cq6 == 3,
+         harvest_sold_consumer = s8cq6 == 4,
+         harvest_sold_state_org = s8cq6 == 5,
+         harvest_sold_coop = s8cq6 == 6,
+         paid_at_sale = s8cq10a == 1,
+         paid_at_week = s8cq10a == 2,
+         paid_at_month = s8cq10a == 3,
+         paid_at_over_m = s8cq10a == 4,
+         males_on_farme = ifelse(s8cq17a>1e+100,0,s8cq17a),
+         females_on_farme = ifelse(s8cq17b>1e+100,0,s8cq17b),
+         workers_on_farm = males_on_farme + females_on_farme
+  ) %>% 
   select(-clust,-nh,-starts_with("S8")) %>% 
   group_by(ID) %>% 
   summarise(harvest_sold_pre=any(harvest_sold_pre),
@@ -322,14 +322,14 @@ mod_7 <- lm(profit_per_acre~harvest_sold_gate+harvest_sold_market+
 summary(mod_7)
 
 mod_7_log <- lm(profit_per_acre_log~harvest_sold_gate+harvest_sold_market+
-              harvest_sold_consumer+harvest_sold_state_org+harvest_sold_coop+
-              paid_at_sale+paid_at_week+paid_at_month+males_on_farme+
-              females_on_farme+workers_on_farm,data=base)
+                  harvest_sold_consumer+harvest_sold_state_org+harvest_sold_coop+
+                  paid_at_sale+paid_at_week+paid_at_month+males_on_farme+
+                  females_on_farme+workers_on_farm,data=base)
 summary(mod_7_log)
 
 mod_7b_log <- lm(profit_per_acre_log~harvest_sold_gate+harvest_sold_market+
-                  harvest_sold_consumer+harvest_sold_state_org+harvest_sold_coop+
-                  paid_at_sale+paid_at_week+paid_at_month+workers_on_farm,data=base)
+                   harvest_sold_consumer+harvest_sold_state_org+harvest_sold_coop+
+                   paid_at_sale+paid_at_week+paid_at_month+workers_on_farm,data=base)
 summary(mod_7b_log)
 
 
@@ -341,19 +341,52 @@ com_surv_2 <- com_surv_2 %>%
          most_impor_farming = s2q1a==1,
          most_impor_fishing = s2q1a==2,
          moto_road = s2q4 ==1,
+         #new(Q5: distance to the near road)
+         moto_road_distance = s2q5,
          moto_road_impassable = s2q6 ==1,
-         have_bar = s2q13 ==1,
+         #new(Q9: most households have electricty. Q11: most households have pipe water)
+         most_have_electricty = s2q9 ==1,
+         most_have_pipe_water = s2q11 ==1,
+         #revise(Q14: have the bar. The bar is in the question 14, but the previouse code mis-locate this quesion to the question 13)
+         have_bar = s2q14 ==1,
          have_post_of_pub_telephone = s2q15 == 1,
+         #new(Q16: the distance to the post office or public telephone)
+         distance_to_post_of_pub_telephone = s2q16,
          have_bank = s2q17 == 1,
+         #new(Q18: distance to the nearest bank)
+         distance_to_nearest_bank = s2q18,
          have_daily_mkt = s2q19 ==1,
          have_week_mkt = s2q21b ==1,
+         #new(Q22: distance to the nearest market)
+         distance_to_nearest_market = s2q22,
          public_transp = s2q23 ==1,
+         #new(Q25: distance to the public transport)
+         distance_to_public_transportation = s2q25,
          people_come_for_job_farming = s2q32 == 1 & (s2q34a==1 |s2q34b==1)
          
   ) %>% select(-starts_with("s2"),-eanum,-region,-district)
 
 com_surv_2 <- com_surv_2 %>% group_by(clust) %>% mutate_if(is.logical,any)
 com_surv_2 <- com_surv_2 %>% unique()
+
+#add the question of section3: education  
+com_surv_3 <- read_dta(here("raw_data/glss4/community","cs3.dta")) 
+com_surv_3 <- com_surv_3 %>% 
+  mutate(clust = eanum + 4000,
+         have_primary_schol = s3q1 == 1,
+         distance_to_the_nearest_primary_school = s3q2,
+         have_junior_2ndschool = s3q11 == 1,
+         distance_to_the_nearest_junior_2ndschool = s3q12,
+         age_of_junior_2ndschool = s3q18,
+         have_senior_2ndschool = s3q20 == 1,
+         distance_to_the_nearest_senior_2ndschool = s3q21,
+         age_of_senior_2ndschool = s3q27,
+         have_adult_literacy_probram = s3q29 == 1,
+         age_of_adult_literacy_probram = s3q30
+  ) %>% select(-starts_with("s3"),-eanum,-region,-district)         
+com_surv_3 <- com_surv_3 %>% group_by(clust) %>% mutate_if(is.logical,any)
+com_surv_3 <- com_surv_3 %>% unique()        
+
 
 com_surv_4b <- read_dta(here("raw_data/glss4/community","cs4b.dta")) 
 com_surv_4b <- com_surv_4b %>% 
@@ -367,7 +400,15 @@ com_surv_5b <- read_dta(here("raw_data/glss4/community","cs5b.dta"))
 com_surv_5b <- com_surv_5b %>% 
   mutate(clust = eanum + 4000,
          have_agric_ext_center = s5bq5==1,
+         #new(Q6: the distance to the agricultural extension centre.)
+         distance_to_agri_extention_centre = s5bq6,
+         #new(Q7: Agriculture extension centre officer visit this community)
+         agri_officer_visit_community = s5bq7 == 1,
          have_cooperative = s5bq10==1,
+         #new(Q13: number of tractors in this community)
+         number_tractors = s5bq13,
+         #new(Q14: if rick-husking machine is available in this community)
+         have_rice_husking_machine = s5bq14 == 1,
          any_farm_use_fert = s5bq15 ==1,
          any_farm_use_inset_herb = s5bq16 ==1,
          any_farm_use_irrigate = s5bq17 ==1,
@@ -379,20 +420,20 @@ com_surv_5b <- com_surv_5b %>% unique()
 
 ###### Join communit Survey
 suppressWarnings(
-base <- base %>% 
-  left_join(com_surv_2, by="clust") %>% 
-  left_join(com_surv_4b, by="clust") %>% 
-  left_join(com_surv_5b, by="clust")
+  base <- base %>% 
+    left_join(com_surv_2, by="clust") %>% 
+    left_join(com_surv_4b, by="clust") %>% 
+    left_join(com_surv_5b, by="clust")
 )
 
 base <- base %>% filter(!is.na(most_impor_farming)) 
 aux <- base[which(! complete.cases(base)),]
-  
+
 mod_8_log <- lm(profit_per_acre_log~most_impor_farming + most_impor_fishing +  moto_road +
-                moto_road_impassable +  have_bar + have_post_of_pub_telephone + have_bank +
-                have_daily_mkt + have_week_mkt + public_transp + people_come_for_job_farming +
-                have_hospital + have_agric_ext_center + have_cooperative + any_farm_use_fert +
-                any_farm_use_inset_herb + any_farm_use_irrigate + mutual_aid_farm,data=base)
+                  moto_road_impassable +  have_bar + have_post_of_pub_telephone + have_bank +
+                  have_daily_mkt + have_week_mkt + public_transp + people_come_for_job_farming +
+                  have_hospital + have_agric_ext_center + have_cooperative + any_farm_use_fert +
+                  any_farm_use_inset_herb + any_farm_use_irrigate + mutual_aid_farm,data=base)
 summary(mod_8_log)
 
 #excluding NAs
@@ -426,13 +467,13 @@ base %>% ggplot(aes(x = fitted, y = residuals)) +
   geom_point()
 
 mod_10_log <- lm(profit_per_acre_log~have_bar + have_post_of_pub_telephone + 
-                  any_farm_use_fert +
-                  farm_size+agey+spouse_live_hh+sex_male+educ_bece+educ_advanced+
-                  region_Western+region_Central+region_Greater_Accra+
-                  region_Eastern+region_Volta+region_Ashanti+region_Brong_Ahafo+
-                  region_Northern+region_Upper_East+light_eletricity+
-                  cooking_full_gas+harvest_sold_gate+harvest_sold_market+
-                  harvest_sold_state_org+harvest_sold_coop, data=base)
+                   any_farm_use_fert +
+                   farm_size+agey+spouse_live_hh+sex_male+educ_bece+educ_advanced+
+                   region_Western+region_Central+region_Greater_Accra+
+                   region_Eastern+region_Volta+region_Ashanti+region_Brong_Ahafo+
+                   region_Northern+region_Upper_East+light_eletricity+
+                   cooking_full_gas+harvest_sold_gate+harvest_sold_market+
+                   harvest_sold_state_org+harvest_sold_coop, data=base)
 summary(mod_10_log)
 
 #Excluding education
