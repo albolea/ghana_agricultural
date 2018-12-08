@@ -16,10 +16,10 @@ subagg15 <- subagg15 %>% mutate(ID = paste(clust,nh,sep="_"))
 subagg16 <- subagg16 %>% mutate(ID = paste(clust,nh,sep="_"))
 
 #join variables
-farms_profit <- subagg13 %>% full_join(subagg14,by = "ID")
+farms_profit <- subagg13 %>% full_join(subagg14,by = "ID") 
 farms_profit <- farms_profit %>% full_join(subagg15,by = "ID")
 farms_profit <- farms_profit %>% full_join(subagg16,by = "ID")
-farms_profit <-farms_profit %>%  select(ID,crpinc1,crpinc2,incothag,trcrpinc)
+farms_profit <-farms_profit %>%  select(ID,crpinc1,crpinc2,rootinc,incothag,trcrpinc)
 
 #COSTS
 subagg22 <- read_dta(here("raw_data/glss4/aggregates","subagg22.dta")) #renting farm land
@@ -46,7 +46,7 @@ farms_profit <- farms_profit %>% left_join(subagg31)
 farms_profit <- farms_profit %>% mutate_all(funs(replace(., is.na(.), 0)))
 
 #include total Revenue, Total Cost and Total Profit
-farms_profit <- farms_profit %>% mutate(tot_rev = crpinc1 + crpinc2 + incothag + trcrpinc,
+farms_profit <- farms_profit %>% mutate(tot_rev = crpinc1 + crpinc2 + rootinc +incothag + trcrpinc,
                                         tot_cost = expland + expcrop + expliv + expfdpr1 + expfdpr2 + depneq,
                                         tot_profit = tot_rev - tot_cost)
 
@@ -54,4 +54,5 @@ farms_profit <- farms_profit %>% mutate(tot_rev = crpinc1 + crpinc2 + incothag +
 rm(subagg13,subagg14,subagg15,subagg16,subagg22,subagg23,subagg24,subagg25,subagg31)
 #saving fina variable
 saveRDS(farms_profit, file = here("data","farms_profit.RData"))
+
 
