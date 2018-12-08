@@ -342,7 +342,7 @@ com_surv_2 <- com_surv_2 %>%
          most_impor_fishing = s2q1a==2,
          moto_road = s2q4 ==1,
          #new(Q5: distance to the near road)
-         moto_road_distance = s2q5,
+         moto_road_distance = ifelse(s2q5<1e+100,s2q5,0) ,
          moto_road_impassable = s2q6 ==1,
          #new(Q9: most households have electricty. Q11: most households have pipe water)
          most_have_electricty = s2q9 ==1,
@@ -351,17 +351,17 @@ com_surv_2 <- com_surv_2 %>%
          have_bar = s2q14 ==1,
          have_post_of_pub_telephone = s2q15 == 1,
          #new(Q16: the distance to the post office or public telephone)
-         distance_to_post_of_pub_telephone = s2q16,
+         distance_to_post_of_pub_telephone = ifelse(s2q16<1e+100,s2q16,0),
          have_bank = s2q17 == 1,
          #new(Q18: distance to the nearest bank)
-         distance_to_nearest_bank = s2q18,
+         distance_to_nearest_bank = ifelse(s2q18<1e+100,s2q18,0),
          have_daily_mkt = s2q19 ==1,
          have_week_mkt = s2q21b ==1,
          #new(Q22: distance to the nearest market)
-         distance_to_nearest_market = s2q22,
+         distance_to_nearest_market = ifelse(s2q22<1e+100,s2q22,0),
          public_transp = s2q23 ==1,
          #new(Q25: distance to the public transport)
-         distance_to_public_transportation = s2q25,
+         distance_to_public_transportation = ifelse(s2q25<1e+100,s2q25,0),
          people_come_for_job_farming = s2q32 == 1 & (s2q34a==1 |s2q34b==1)
          
   ) %>% select(-starts_with("s2"),-eanum,-region,-district)
@@ -374,12 +374,12 @@ com_surv_3 <- read_dta(here("raw_data/glss4/community","cs3.dta"))
 com_surv_3 <- com_surv_3 %>% 
   mutate(clust = eanum + 4000,
          have_primary_schol = s3q1 == 1,
-         distance_to_the_nearest_primary_school = s3q2,
+         distance_to_the_nearest_primary_school = ifelse(s3q2<1e+100,s3q2,0),
          have_junior_2ndschool = s3q11 == 1,
-         distance_to_the_nearest_junior_2ndschool = s3q12,
+         distance_to_the_nearest_junior_2ndschool = ifelse(s3q12<1e+100,s3q12,0),
          age_of_junior_2ndschool = s3q18,
          have_senior_2ndschool = s3q20 == 1,
-         distance_to_the_nearest_senior_2ndschool = s3q21,
+         distance_to_the_nearest_senior_2ndschool = ifelse(s3q21<1e+100,s3q21,0),
          age_of_senior_2ndschool = s3q27,
          have_adult_literacy_probram = s3q29 == 1,
          age_of_adult_literacy_probram = s3q30
@@ -401,7 +401,7 @@ com_surv_5b <- com_surv_5b %>%
   mutate(clust = eanum + 4000,
          have_agric_ext_center = s5bq5==1,
          #new(Q6: the distance to the agricultural extension centre.)
-         distance_to_agri_extention_centre = s5bq6,
+         distance_to_agri_extention_centre = ifelse(s5bq6<1e+100,s5bq6,0),
          #new(Q7: Agriculture extension centre officer visit this community)
          agri_officer_visit_community = s5bq7 == 1,
          have_cooperative = s5bq10==1,
