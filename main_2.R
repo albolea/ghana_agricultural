@@ -165,7 +165,7 @@ housing_info <- housing_info %>%
          light_eletricity = s7dq8 == 1,
          light_generator = s7dq8 == 2,
          light_others = s7dq8>2,
-         cookitideng_full_gas = s7dq10 ==3,
+         cooking_full_gas = s7dq10 ==3,
          cooking_full_eletricity = s7dq10 ==4,
          cooking_other = (s7dq10<3|s7dq10>4),
          toilet_flush = s7dq13==1,
