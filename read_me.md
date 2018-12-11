@@ -1,0 +1,209 @@
+# Ghana Agricultural Profit
+
+Group 6
+
+December 5, 2018
+
+## Assumptions:
+
+  1. Farms bigger than 0.2 Acres (including) - 16 Observations / 0.55%
+  2. Farms smaller than 150 Acres (Excluding) - 10 Observarions / 0.34%
+  3. profit_per_acre inside 97.5% of confidence interval - 62 observations / 2.1%
+  4. Prediction of LN of profit_per_acre after scale up by the min observation + 10,000
+  5. Exclusion of Communities where Fishing is the main activity
+
+### Descriptive Analysis of Variable
+
+```{r, echo=FALSE}
+source("main.R")
+base %>% 
+  select(-starts_with("region"),
+                -starts_with("ez"),
+                -starts_with("loc"),
+                -ID,
+                -nh,
+                -farmer) %>% 
+  summary()
+  
+```
+
+## General Model
+
+```{r general_model, echo=FALSE}
+mod_9_log <- lm(profit_per_acre_log~most_impor_farming +  moto_road +
+                  moto_road_impassable +  have_bar + have_post_of_pub_telephone + have_bank +
+                  have_daily_mkt + have_week_mkt + public_transp + people_come_for_job_farming +
+                  have_hospital + have_agric_ext_center + have_cooperative + any_farm_use_fert +
+                  any_farm_use_inset_herb + any_farm_use_irrigate + mutual_aid_farm +
+                  farm_size+I(farm_size^2)+agey+spouse_live_hh+sex_male+fishing+own_business+
+                  educ_bece+educ_advanced+do_math+
+                  region_Western+region_Central+region_Greater_Accra+
+                  region_Eastern+region_Volta+region_Ashanti+region_Brong_Ahafo+
+                  region_Northern+region_Upper_East+light_eletricity+light_generator+
+                  cooking_full_gas+
+                  toilet_flush+toilet_latrine+wall_mud+wall_wood+wall_iron+
+                  wall_stone+harvest_sold_gate+harvest_sold_market+
+                  harvest_sold_consumer+harvest_sold_state_org+harvest_sold_coop+
+                  paid_at_sale+paid_at_week+paid_at_month+males_on_farme+
+                  females_on_farme
+                  , data=base)
+                      
+summary(mod_9_log)
+
+```
+
+### Standardized residuals plot
+
+```{r, echo=FALSE}
+base <- base %>% 
+  mutate(
+    stand_res = rstandard(mod_9_log)
+  )
+base %>% ggplot(aes(x = stand_res)) +
+  geom_histogram(binwidth = 0.25) + xlab("Standardized residuals")
+```
+
+### Residual versus the fitted value
+
+```{r, echo=FALSE}
+base$fitted <- mod_9_log$fitted.values
+base$residuals <- mod_9_log$residuals
+base %>% ggplot(aes(x = fitted, y = residuals)) +
+  geom_point()
+```
+
+**Is expected that the same factor have different influence in a small, normal or large farm**
+
+## 1. Model for a small farm (less than 2 Acres - 496 Observations)
+
+```{r, echo=FALSE}
+base_small_farms <- base %>% filter(farm_size<2)
+
+mod_9_log <- lm(profit_per_acre_log~most_impor_farming + most_impor_fishing +  moto_road +
+                  moto_road_impassable +  have_bar + have_post_of_pub_telephone + have_bank +
+                  have_daily_mkt + have_week_mkt + public_transp + people_come_for_job_farming +
+                  have_hospital + have_agric_ext_center + have_cooperative + any_farm_use_fert +
+                  any_farm_use_inset_herb + any_farm_use_irrigate + mutual_aid_farm +
+                  farm_size+I(farm_size^2)+agey+I(agey^2)+spouse_live_hh+sex_male+fishing+own_business+
+                  educ_bece+educ_advanced+do_math+
+                  region_Western+region_Central+region_Greater_Accra+
+                  region_Eastern+region_Volta+region_Ashanti+region_Brong_Ahafo+
+                  region_Northern+region_Upper_East+light_eletricity+light_generator+
+                  cooking_full_gas+
+                  toilet_flush+toilet_latrine+wall_mud+wall_wood+wall_iron+
+                  wall_stone+wall_cement+harvest_sold_gate+harvest_sold_market+
+                  harvest_sold_consumer+harvest_sold_state_org+harvest_sold_coop+
+                  paid_at_sale+paid_at_week+paid_at_month+males_on_farme+
+                  females_on_farme,data=base_small_farms)
+summary(mod_9_log)
+```
+
+### Standardized residuals plot Small Farms Model
+
+```{r, echo=FALSE}
+base_small_farms <- base_small_farms %>% 
+  mutate(
+    stand_res = rstandard(mod_9_log)
+  )
+base_small_farms %>% ggplot(aes(x = stand_res)) +
+  geom_histogram(binwidth = 0.25) + xlab("Standardized residuals")
+```
+
+### Residual versus the fitted value plot Small Farms Model
+
+```{r, echo=FALSE}
+base_small_farms$fitted <- mod_9_log$fitted.values
+base_small_farms$residuals <- mod_9_log$residuals
+base_small_farms %>% ggplot(aes(x = fitted, y = residuals)) +
+  geom_point() 
+```
+
+## 2. Model for a "Normal" farm (more than 2 Acres(including) and less than 10 (including) - 1787 Observations)
+
+```{r, echo=FALSE}
+base_normal_farms <- base %>% filter(farm_size>=2 & farm_size<=10)
+
+mod_9_log <- lm(profit_per_acre_log~most_impor_farming + most_impor_fishing +  moto_road +
+                  moto_road_impassable +  have_bar + have_post_of_pub_telephone + have_bank +
+                  have_daily_mkt + have_week_mkt + public_transp + people_come_for_job_farming +
+                  have_hospital + have_agric_ext_center + have_cooperative + any_farm_use_fert +
+                  any_farm_use_inset_herb + any_farm_use_irrigate + mutual_aid_farm +
+                  farm_size+I(farm_size^2)+agey+I(agey^2)+spouse_live_hh+sex_male+fishing+own_business+
+                  educ_bece+educ_advanced+do_math+
+                  region_Western+region_Central+region_Greater_Accra+
+                  region_Eastern+region_Volta+region_Ashanti+region_Brong_Ahafo+
+                  region_Northern+region_Upper_East+light_eletricity+light_generator+
+                  cooking_full_gas+
+                  toilet_flush+toilet_latrine+wall_mud+wall_wood+wall_iron+
+                  wall_stone+wall_cement+harvest_sold_gate+harvest_sold_market+
+                  harvest_sold_consumer+harvest_sold_state_org+harvest_sold_coop+
+                  paid_at_sale+paid_at_week+paid_at_month+males_on_farme+
+                  females_on_farme,
+                  data=base_normal_farms)
+summary(mod_9_log)
+```
+
+### Standardized residuals plot "Normal" Farms Model
+
+```{r, echo=FALSE}
+base_normal_farms <- base_normal_farms %>% 
+  mutate(
+    stand_res = rstandard(mod_9_log)
+  )
+base_normal_farms %>% ggplot(aes(x = stand_res)) +
+  geom_histogram(binwidth = 0.25) + xlab("Standardized residuals")
+```
+
+### Residual versus the fitted value plot "Normal" Farms Model
+
+```{r, echo=FALSE}
+base_normal_farms$fitted <- mod_9_log$fitted.values
+base_normal_farms$residuals <- mod_9_log$residuals
+base_normal_farms %>% ggplot(aes(x = fitted, y = residuals)) +
+  geom_point() 
+```
+
+## 3. Model for a Large farm (more than 10 Acres (excluding) - 496 Observations)
+
+```{r, echo=FALSE}
+base_large_farms <- base %>% filter(farm_size>10)
+
+mod_9_log <- lm(profit_per_acre_log~most_impor_farming + most_impor_fishing +  moto_road +
+                  moto_road_impassable +  have_bar + have_post_of_pub_telephone + have_bank +
+                  have_daily_mkt + have_week_mkt + public_transp + people_come_for_job_farming +
+                  have_hospital + have_agric_ext_center + have_cooperative + any_farm_use_fert +
+                  any_farm_use_inset_herb + any_farm_use_irrigate + mutual_aid_farm +
+                  farm_size+I(farm_size^2)+agey+I(agey^2)+spouse_live_hh+sex_male+fishing+own_business+
+                  educ_bece+educ_advanced+do_math+
+                  region_Western+region_Central+region_Greater_Accra+
+                  region_Eastern+region_Volta+region_Ashanti+region_Brong_Ahafo+
+                  region_Northern+region_Upper_East+light_eletricity+light_generator+
+                  cooking_full_gas+
+                  toilet_flush+toilet_latrine+wall_mud+wall_wood+wall_iron+
+                  wall_stone+wall_cement+harvest_sold_gate+harvest_sold_market+
+                  harvest_sold_consumer+harvest_sold_state_org+harvest_sold_coop+
+                  paid_at_sale+paid_at_week+paid_at_month+males_on_farme+
+                  females_on_farme,
+                data=base_large_farms)
+summary(mod_9_log)
+```
+
+### Standardized residuals plot Large Farms Model
+
+```{r, echo=FALSE}
+base_large_farms <- base_large_farms %>% 
+  mutate(
+    stand_res = rstandard(mod_9_log)
+  )
+base_large_farms %>% ggplot(aes(x = stand_res)) +
+  geom_histogram(binwidth = 0.25) + xlab("Standardized residuals")
+```
+
+### Residual versus the fitted value plot Large Farms Model
+
+```{r, echo=FALSE}
+base_large_farms$fitted <- mod_9_log$fitted.values
+base_large_farms$residuals <- mod_9_log$residuals
+base_large_farms %>% ggplot(aes(x = fitted, y = residuals)) +
+  geom_point() 
+```
